@@ -4,7 +4,7 @@ const Letter=({dot})=>{
    
     const style={
     left:`${dot[0]}%`,
-    top:`${dot[1]}`,
+    up:`${dot[1]}`,
    }
    return <div className="letter" style={style}>o</div>
 

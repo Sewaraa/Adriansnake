@@ -1,153 +1,167 @@
-import React, { useCallback, useEffect, useState } from "react";
-import Snake from "./Snake";
-import Letter from "./Letter";
+import React, { useEffect, useState } from "react";
+
+const ROWS = 25;
+const COLS = 25;
+const INITIAL_SNAKE = [{ row: 12, col: 12 }];
+const INITIAL_DIRECTION = "RIGHT";
+const ALPHABET = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"];
+
+const generateFood = () => {
+  const randomIndex = Math.floor(Math.random() * ALPHABET.length);
+  const letter = ALPHABET[randomIndex];
+  return {
+    row: Math.floor(Math.random() * ROWS),
+    col: Math.floor(Math.random() * COLS),
+    letter: letter,
+  };
+};
+
 
 const Game = () => {
-  const getRandomGrid = () => {
-    let min = 2;
-    let max = 100;
-    let x = Math.floor((Math.random() * (max - min + 1) + min) / 2) * 2;
-    let y = Math.floor((Math.random() * (max - min + 1) + min) / 2) * 2;
-    return [x, y];
-  };
-
-  const [food, setFood] = useState(getRandomGrid);
-  const [speed] = useState(200);
-  const [direction, setDirection] = useState('RIGHT');
-  const [snakDots, setSnakeDots] = useState([
-    [0, 0],
-    [2, 0],
-  ]);
-
-  const [reset] = useState(true);
-  const [pause, setPause] = useState(true);
-
-  const checkIfEat = useCallback((head) => {
-    if (head[0] === food[0] && head[1] === food[1]) {
-      return true;
-    } else {
-      return false;
-    }
-  }, [food]);
-
-  const moveSnake = useCallback(() => {
-   if (!direction) return;
-    console.log(direction)
-    let updatedSnake = [...snakDots];
-    let head = [...updatedSnake[updatedSnake.length - 1]];
-    switch (direction) {
-      case "RIGHT":
-        head[0] += 1;
-        break;
-      case "LEFT":
-        head[0] -= 1;
-        break;
-      case "UP":
-        head[1] -= 1;
-        break;
-      case "DOWN":
-        head[1] += 1;
-        break;
-      default:
-        break;
-    }
-    if (direction) {
-      
-      updatedSnake.push(head);
-      checkIfEat(head) ? setFood(getRandomGrid()) : updatedSnake.shift();
-    }
-    
-    setSnakeDots(updatedSnake);
-   
-  }, [checkIfEat, direction, snakDots]);
-  useEffect(() => {
-    const handleKeyDown = (event) => {
-       switch (event.keyCode) {
-       case 37:
-       setDirection("LEFT");
-       break;
-       case 38:
-       setDirection("UP");
-       break;
-       case 39:
-       setDirection("RIGHT");
-       break;
-       case 40:
-       setDirection("DOWN");
-       break;
-       default:
-       break;
-       }
-       console.log(event.keyCode)
-     };
-     
-    
-       document.addEventListener("keydown", handleKeyDown);
-
- return () => {
-
- document.removeEventListener("keydown", handleKeyDown);
- };
-  }, [direction,setDirection]);
+  const [snake, setSnake] = useState(INITIAL_SNAKE);
+  const [direction, setDirection] = useState(INITIAL_DIRECTION);
+  const [food, setFood] = useState(generateFood());
+  const [gameOver, setGameOver] = useState(false);
+  const [isPause, setIsPause] = useState(false);
+  const [score, setScore] = useState(0);
   
 
-  const onGameOver = useCallback(() => {
-    setSnakeDots([
-      [0, 0],
-      [2, 0],
-    ]);
-    setDirection(null);
-    setPause(true);
-  }, []);
+  const checkCollision = (snake) => {
+    const head = snake[0];
+    return (
+      snake.slice(1).some((segment) => segment.row === head.row && segment.col === head.col) ||
+      head.row < 0 ||
+      head.row >= ROWS ||
+      head.col < 0 ||
+      head.col >= COLS
+    );
+  };
 
-  const checkIfOutside = useCallback(() => {
-    let head = snakDots[snakDots.length - 1];
-    if (
-      head[0] >= 99||
-      head[1] >= 99 ||
-      head[0] < 0 ||
-      head[1] < 0
-    ) {
-      onGameOver();
-    }
-  }, [snakDots,onGameOver]);
-
- 
-
-  const checkIfCollapsed = useCallback(() => {
-    let snake = [...snakDots];
-    let head = snake[snake.length - 1];
-    snake.pop();
-    snake.forEach((dot) => {
-      if (head[0] === dot[0] && head[1] === dot[1]) {
-        onGameOver();
-      }
-    });
-  }, [snakDots, onGameOver]);
- 
+  const resetGame = () => {
+    setSnake(INITIAL_SNAKE);
+    setDirection(INITIAL_DIRECTION);
+    setFood(generateFood());
+    setGameOver(false);
+    setScore(0);
+  };
 
   useEffect(() => {
-    if (pause) return
+    if (!gameOver && !isPause) {
+      const moveSnake = () => {
+        const newSnake = snake.map((segment) => ({ ...segment }));
 
-    checkIfOutside();
+        const head = { ...newSnake[0] };
 
-    checkIfCollapsed();
-    
-    setTimeout(() => moveSnake(snakDots,checkIfEat), speed);
-   
-  }, [snakDots, pause, moveSnake, checkIfCollapsed, checkIfOutside, speed,checkIfEat]);
+        switch (direction) {
+          case "UP":
+            head.row = (head.row - 1 + ROWS) % ROWS;
+            break;
+          case "DOWN":
+            head.row = (head.row + 1) % ROWS;
+            break;
+          case "LEFT":
+            head.col = (head.col - 1 + COLS) % COLS;
+            break;
+          case "RIGHT":
+            head.col = (head.col + 1) % COLS;
+            break;
+          default:
+            break;
+        }
 
- 
+        newSnake.unshift(head);
+
+        if (head.row === food.row && head.col === food.col) {
+          setFood(generateFood());
+          setScore(score + 10);
+        } else {
+          newSnake.pop();
+        }
+
+        if (checkCollision(newSnake)) {
+          setGameOver(true);
+        } else {
+          setSnake(newSnake);
+        }
+      };
+
+      const gameInterval = setInterval(moveSnake, 100);
+
+      return () => {
+        clearInterval(gameInterval);
+      };
+    }
+  }, [snake, direction, food, gameOver, isPause, score]);
+
+  useEffect(() => {
+    const handleKeyPress = (e) => {
+      switch (e.key) {
+        case "ArrowUp":
+          setDirection("UP");
+          break;
+        case "ArrowDown":
+          setDirection("DOWN");
+          break;
+        case "ArrowLeft":
+          setDirection("LEFT");
+          break;
+        case "ArrowRight":
+          setDirection("RIGHT");
+          break;
+        default:
+          break;
+      }
+    };
+    document.addEventListener("keydown", handleKeyPress);
+    return () => {
+      document.removeEventListener("keydown", handleKeyPress);
+    };
+  }, []);
 
   return (
-    <div className="container">
-      <div className="game-container">
-        <Snake snakDots={snakDots} />
-        <Letter dot={food} />
+    <div>
+      <h1> Adrin & Snake</h1>
+      <div className="game-board">
+        {Array.from({ length: ROWS }).map((_, rowIndex) => (
+         <div key={rowIndex} className="row">
+            {Array.from({ length: COLS }).map((_, colIndex) => (
+              <div
+              key={colIndex}
+              className={`cell ${snake.some(
+                (segment) => segment.row === rowIndex && segment.col === colIndex
+              ) ? 'snake' : ''} ${food.row === rowIndex && food.col === colIndex ? 'food' : ''}`}
+            >  {food.row === rowIndex && food.col === colIndex && food.letter}
+              {snake.some(
+                (segment) => segment.row === rowIndex && segment.col === colIndex && segment.letter
+              )
+                ? snake.find(
+                    (segment) =>
+                      segment.row === rowIndex && segment.col === colIndex
+                  ).letter
+                : ""}
+            </div>
+            ))}
+          </div>
+        ))}
       </div>
-      <button className="btn btn-sm" onClick={()=> setPause((p)=>!p)}>
-          {pause ?'play':'pause'}
-        </button>
+      {gameOver && (
+        <div className='dialog'>
+          <div className='reset'>
+            <p>Oops Adrin Game over! <b>Your Score 🐍 {score}</b></p>
+            <button onClick={resetGame}>Restart</button>
+          </div>
+        </div>
+      )}
+      <div className='control'>
+        <button onClick={() => { setIsPause(!isPause) }}> {isPause ? 'Resume' : 'Pause'}</button>
+        <p> Score : 🚀 {score}</p>
+        <div className='button'>
+          <button className="up" onClick={() => setDirection('UP')} >↑</button><br />
+          <button className="left" onClick={() => setDirection('LEFT')} >←</button>
+          <button className="right" onClick={() => setDirection('RIGHT')}>→</button><br />
+          <button className="down" onClick={() => setDirection('DOWN')}>↓</button>
+        </div>
+      </div>
     </div>
   );
 };
