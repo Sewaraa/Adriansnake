@@ -5,14 +5,36 @@ const COLS = 25;
 const INITIAL_SNAKE = [{ row: 12, col: 12 }];
 const INITIAL_DIRECTION = "RIGHT";
 const ALPHABET = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"];
+const Numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+const Names = ['Brian', 'Thomas'  ,'Choo Choo Astoria Alenda','Arthur','Avila']
 
-const generateFood = () => {
-  const randomIndex = Math.floor(Math.random() * ALPHABET.length);
-  const letter = ALPHABET[randomIndex];
+const generateFood = level => {
+
+  let randomIndex;
+  let foodSnake;
+  switch (level) {
+    case '1':
+      randomIndex = Math.floor(Math.random() * ALPHABET.length);
+      foodSnake = ALPHABET[randomIndex]
+      break;
+    case '2':
+       randomIndex = Math.floor(Math.random() * Numbers.length);
+      foodSnake = Numbers[randomIndex]
+      break;
+    case '3':
+      randomIndex = Math.floor(Math.random() * Names.length);
+      foodSnake = Names[randomIndex]
+      break;
+    default:
+      foodSnake = "";
+
+  }
+
+
   return {
     row: Math.floor(Math.random() * ROWS),
     col: Math.floor(Math.random() * COLS),
-    letter: letter,
+    foodSnake: foodSnake,
   };
 };
 
@@ -20,11 +42,13 @@ const generateFood = () => {
 const Game = () => {
   const [snake, setSnake] = useState(INITIAL_SNAKE);
   const [direction, setDirection] = useState(INITIAL_DIRECTION);
-  const [food, setFood] = useState(generateFood());
+ 
   const [gameOver, setGameOver] = useState(false);
   const [isPause, setIsPause] = useState(false);
   const [score, setScore] = useState(0);
-  
+  const [level, setLevel] = useState(null)
+  const [food, setFood] = useState(generateFood(level));
+
 
   const checkCollision = (snake) => {
     const head = snake[0];
@@ -40,13 +64,21 @@ const Game = () => {
   const resetGame = () => {
     setSnake(INITIAL_SNAKE);
     setDirection(INITIAL_DIRECTION);
-    setFood(generateFood());
     setGameOver(false);
     setScore(0);
+    setLevel(null);
+    setFood(generateFood(level));
   };
+    
+  useEffect(()=>{
+    if (level !==null){
+      setFood(generateFood(level))
+    }
+  },[level])
 
   useEffect(() => {
     if (!gameOver && !isPause) {
+      
       const moveSnake = () => {
         const newSnake = snake.map((segment) => ({ ...segment }));
 
@@ -72,7 +104,7 @@ const Game = () => {
         newSnake.unshift(head);
 
         if (head.row === food.row && head.col === food.col) {
-          setFood(generateFood());
+          setFood(generateFood(level));
           setScore(score + 10);
         } else {
           newSnake.pop();
@@ -91,7 +123,7 @@ const Game = () => {
         clearInterval(gameInterval);
       };
     }
-  }, [snake, direction, food, gameOver, isPause, score]);
+  }, [snake, direction, food, gameOver, isPause, score ,level]);
 
   useEffect(() => {
     const handleKeyPress = (e) => {
@@ -123,26 +155,31 @@ const Game = () => {
       <h1> Adrin & Snake</h1>
       <div className="game-board">
         {Array.from({ length: ROWS }).map((_, rowIndex) => (
-         <div key={rowIndex} className="row">
+          <div key={rowIndex} className="row">
             {Array.from({ length: COLS }).map((_, colIndex) => (
               <div
-              key={colIndex}
-              className={`cell ${snake.some(
-                (segment) => segment.row === rowIndex && segment.col === colIndex
-              ) ? 'snake' : ''} ${food.row === rowIndex && food.col === colIndex ? 'food' : ''}`}
-            >  {food.row === rowIndex && food.col === colIndex && food.letter}
-              {snake.some(
-                (segment) => segment.row === rowIndex && segment.col === colIndex && segment.letter
-              )
-                ? snake.find(
+                key={colIndex}
+                className={`cell ${snake.some(
+                  (segment) => segment.row === rowIndex && segment.col === colIndex
+                ) ? 'snake' : ''} ${food.row === rowIndex && food.col === colIndex ? 'food' : ''}`}
+              >  {food.row === rowIndex && food.col === colIndex && food.foodSnake}
+                {snake.some(
+                  (segment) => segment.row === rowIndex && segment.col === colIndex && segment.foodSnake
+                )
+                  ? snake.find(
                     (segment) =>
                       segment.row === rowIndex && segment.col === colIndex
-                  ).letter
-                : ""}
-            </div>
+                  ).foodSnake
+                  : ""}
+              </div>
             ))}
           </div>
         ))}
+      </div>
+      <div className="start__btns">
+        <button className="btn" onClick={()=>setLevel('1')}>level 1</button>
+        <button className="btn" onClick={()=>setLevel('2')}>level 2</button>
+        <button className="btn" onClick={()=>setLevel('3')}>level 3</button>
       </div>
       {gameOver && (
         <div className='dialog'>
