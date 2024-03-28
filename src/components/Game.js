@@ -6,10 +6,10 @@ const INITIAL_SNAKE = [{ row: 12, col: 12 }];
 const INITIAL_DIRECTION = "RIGHT";
 const ALPHABET = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"];
 const Numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-const Names = ['Brian', 'Thomas'  ,'Choo Choo Astoria Alenda','Arthur','Avila']
-
-const generateFood = level => {
-
+const Names = ['*Brian', '*Thomas'  ,'*Choo Choo Astoria Alenda','*Arthur','*Avila']
+ 
+const generateFood = (level) => {
+ 
   let randomIndex;
   let foodSnake;
   switch (level) {
@@ -34,6 +34,7 @@ const generateFood = level => {
   return {
     row: Math.floor(Math.random() * ROWS),
     col: Math.floor(Math.random() * COLS),
+    
     foodSnake: foodSnake,
   };
 };
@@ -47,8 +48,9 @@ const Game = () => {
   const [isPause, setIsPause] = useState(false);
   const [score, setScore] = useState(0);
   const [level, setLevel] = useState(null)
+  
   const [food, setFood] = useState(generateFood(level));
-
+  
 
   const checkCollision = (snake) => {
     const head = snake[0];
@@ -62,19 +64,20 @@ const Game = () => {
   };
 
   const resetGame = () => {
+    setLevel(null);
     setSnake(INITIAL_SNAKE);
     setDirection(INITIAL_DIRECTION);
     setGameOver(false);
     setScore(0);
-    setLevel(null);
     setFood(generateFood(level));
   };
     
   useEffect(()=>{
+    if (!gameOver && !isPause){
     if (level !==null){
       setFood(generateFood(level))
-    }
-  },[level])
+    }}
+  },[level,gameOver,isPause])
 
   useEffect(() => {
     if (!gameOver && !isPause) {
@@ -152,7 +155,7 @@ const Game = () => {
 
   return (
     <div>
-      <h1> Adrin & Snake</h1>
+      <h1> Adrian & Snake</h1>
       <div className="game-board">
         {Array.from({ length: ROWS }).map((_, rowIndex) => (
           <div key={rowIndex} className="row">
@@ -177,14 +180,14 @@ const Game = () => {
         ))}
       </div>
       <div className="start__btns">
-        <button className="btn" onClick={()=>setLevel('1')}>level 1</button>
-        <button className="btn" onClick={()=>setLevel('2')}>level 2</button>
-        <button className="btn" onClick={()=>setLevel('3')}>level 3</button>
+        <button className="button" onClick={()=>setLevel('1')}>level 1</button>
+        <button className="button" onClick={()=>setLevel('2')}>level 2</button>
+        <button className="button" onClick={()=>setLevel('3')}>level 3</button>
       </div>
       {gameOver && (
         <div className='dialog'>
           <div className='reset'>
-            <p>Oops Adrin Game over! <b>Your Score 🐍 {score}</b></p>
+            <p>Oops Adrian Game over! <b>Your Score 🐍 {score}</b></p>
             <button onClick={resetGame}>Restart</button>
           </div>
         </div>
