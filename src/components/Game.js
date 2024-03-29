@@ -148,7 +148,7 @@ const Game = () => {
         }
       };
 
-      const gameInterval = setInterval(moveSnake, 100);
+      const gameInterval = setInterval(moveSnake, 150);
 
       return () => {
         clearInterval(gameInterval);
