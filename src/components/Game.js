@@ -6,10 +6,10 @@ const INITIAL_SNAKE = [{ row: 12, col: 12 }];
 const INITIAL_DIRECTION = "RIGHT";
 const ALPHABET = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"];
 const Numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-const Names = ['*Brian', '*Thomas'  ,'*Choo Choo Astoria Alenda','*Arthur','*Avila']
- 
+const Names = ['*Brian', '*Thomas', '*Choo Choo Astoria Alenda', '*Arthur', '*Avila']
+
 const generateFood = (level) => {
- 
+
   let randomIndex;
   let foodSnake;
   switch (level) {
@@ -18,7 +18,7 @@ const generateFood = (level) => {
       foodSnake = ALPHABET[randomIndex]
       break;
     case '2':
-       randomIndex = Math.floor(Math.random() * Numbers.length);
+      randomIndex = Math.floor(Math.random() * Numbers.length);
       foodSnake = Numbers[randomIndex]
       break;
     case '3':
@@ -30,27 +30,55 @@ const generateFood = (level) => {
 
   }
 
+  if (level === '3') {
+    return {
+      row: Math.floor(Math.random() * 20),
+      col: Math.floor(Math.random() * 20),
 
-  return {
-    row: Math.floor(Math.random() * ROWS),
-    col: Math.floor(Math.random() * COLS),
-    
-    foodSnake: foodSnake,
-  };
+      foodSnake: foodSnake,
+
+    };
+  }
+  else {
+    return {
+      row: Math.floor(Math.random() * ROWS),
+      col: Math.floor(Math.random() * COLS),
+
+      foodSnake: foodSnake,
+    };
+  }
+
 };
 
 
 const Game = () => {
   const [snake, setSnake] = useState(INITIAL_SNAKE);
   const [direction, setDirection] = useState(INITIAL_DIRECTION);
- 
+
   const [gameOver, setGameOver] = useState(false);
   const [isPause, setIsPause] = useState(false);
   const [score, setScore] = useState(0);
   const [level, setLevel] = useState(null)
-  
+
   const [food, setFood] = useState(generateFood(level));
-  
+  const handlebutton = (level) => {
+    setDirection(INITIAL_DIRECTION);
+    setSnake(INITIAL_SNAKE);
+    setScore(0);
+    switch (level) {
+      case '1':
+        setLevel('1');
+        break;
+      case '2':
+        setLevel('2');
+        break;
+      case '3':
+        setLevel('3');
+        break;
+      default:
+        break;
+    }
+  }
 
   const checkCollision = (snake) => {
     const head = snake[0];
@@ -69,19 +97,19 @@ const Game = () => {
     setDirection(INITIAL_DIRECTION);
     setGameOver(false);
     setScore(0);
-    setFood(generateFood(level));
+    setFood(generateFood(null));
   };
-    
-  useEffect(()=>{
-    if (!gameOver && !isPause){
-    if (level !==null){
+
+  useEffect(() => {
+
+    if (level !== null) {
       setFood(generateFood(level))
-    }}
-  },[level,gameOver,isPause])
+    }
+  }, [level])
 
   useEffect(() => {
     if (!gameOver && !isPause) {
-      
+
       const moveSnake = () => {
         const newSnake = snake.map((segment) => ({ ...segment }));
 
@@ -126,7 +154,7 @@ const Game = () => {
         clearInterval(gameInterval);
       };
     }
-  }, [snake, direction, food, gameOver, isPause, score ,level]);
+  }, [snake, direction, food, gameOver, isPause, score, level]);
 
   useEffect(() => {
     const handleKeyPress = (e) => {
@@ -154,8 +182,9 @@ const Game = () => {
   }, []);
 
   return (
-    <div>
+    <div >
       <h1> Adrian & Snake</h1>
+      <p> Score : 🚀 {score}</p>
       <div className="game-board">
         {Array.from({ length: ROWS }).map((_, rowIndex) => (
           <div key={rowIndex} className="row">
@@ -179,22 +208,21 @@ const Game = () => {
           </div>
         ))}
       </div>
-      <div className="start__btns">
-        <button className="button" onClick={()=>setLevel('1')}>level 1</button>
-        <button className="button" onClick={()=>setLevel('2')}>level 2</button>
-        <button className="button" onClick={()=>setLevel('3')}>level 3</button>
+      <div className="levelbutton">
+        <button className="button" onClick={() => handlebutton('1')}>level 1</button>
+        <button className="button" onClick={() => handlebutton('2')}>level 2</button>
+        <button className="button" onClick={() => handlebutton('3')}>level 3</button>
       </div>
       {gameOver && (
         <div className='dialog'>
           <div className='reset'>
             <p>Oops Adrian Game over! <b>Your Score 🐍 {score}</b></p>
-            <button onClick={resetGame}>Restart</button>
+            <button onClick={() => resetGame()}>Restart</button>
           </div>
         </div>
       )}
       <div className='control'>
         <button onClick={() => { setIsPause(!isPause) }}> {isPause ? 'Resume' : 'Pause'}</button>
-        <p> Score : 🚀 {score}</p>
         <div className='button'>
           <button className="up" onClick={() => setDirection('UP')} >↑</button><br />
           <button className="left" onClick={() => setDirection('LEFT')} >←</button>
