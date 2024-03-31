@@ -102,6 +102,7 @@ body{
     display: inline-block;
     color: var(--color-bg-light);
     font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    width: fit-content;
   }
   
   button:active,
