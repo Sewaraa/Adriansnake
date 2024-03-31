@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
+import { GameContext } from "../context/GameContext";
 
 const ROWS = 25;
 const COLS = 25;
@@ -6,79 +7,65 @@ const INITIAL_SNAKE = [{ row: 12, col: 12 }];
 const INITIAL_DIRECTION = "RIGHT";
 const ALPHABET = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"];
 const Numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-const Names = ['*Brian', '*Thomas', '*Choo Choo Astoria Alenda', '*Arthur', '*Avila']
+const Names = ['Brian', 'Thomas', 'Choo Choo Astoria Alenda', 'Arthur', 'Avila']
 
-const generateFood = (level) => {
 
-  let randomIndex;
-  let foodSnake;
-  switch (level) {
-    case '1':
-      randomIndex = Math.floor(Math.random() * ALPHABET.length);
-      foodSnake = ALPHABET[randomIndex]
-      break;
-    case '2':
-      randomIndex = Math.floor(Math.random() * Numbers.length);
-      foodSnake = Numbers[randomIndex]
-      break;
-    case '3':
-      randomIndex = Math.floor(Math.random() * Names.length);
-      foodSnake = Names[randomIndex]
-      break;
-    default:
-      foodSnake = "";
-
-  }
-
-  if (level === '3') {
-    return {
-      row: Math.floor(Math.random() * 20),
-      col: Math.floor(Math.random() * 20),
-
-      foodSnake: foodSnake,
-
-    };
-  }
-  else {
-    return {
-      row: Math.floor(Math.random() * ROWS),
-      col: Math.floor(Math.random() * COLS),
-
-      foodSnake: foodSnake,
-    };
-  }
-
-};
 
 
 const Game = () => {
+  const{level }=useContext(GameContext);
+  const generateFood = (level) => {
+
+    let randomIndex;
+    let foodSnake;
+    switch (level) {
+      case '1':
+        randomIndex = Math.floor(Math.random() * ALPHABET.length);
+        foodSnake = ALPHABET[randomIndex]
+        break;
+      case '2':
+        randomIndex = Math.floor(Math.random() * Numbers.length);
+        foodSnake = Numbers[randomIndex]
+        break;
+      case '3':
+        randomIndex = Math.floor(Math.random() * Names.length);
+        foodSnake = Names[randomIndex]
+        break;
+      default:
+        foodSnake = "";
+  
+    }
+  
+    if (level === '3') {
+      return {
+        row: Math.floor(Math.random() * 20),
+        col: Math.floor(Math.random() * 20),
+  
+        foodSnake: foodSnake,
+  
+      };
+    }
+    else {
+      return {
+        row: Math.floor(Math.random() * 23),
+        col: Math.floor(Math.random() * 23),
+  
+        foodSnake: foodSnake,
+      };
+    }
+  
+  };
   const [snake, setSnake] = useState(INITIAL_SNAKE);
   const [direction, setDirection] = useState(INITIAL_DIRECTION);
 
   const [gameOver, setGameOver] = useState(false);
   const [isPause, setIsPause] = useState(false);
   const [score, setScore] = useState(0);
-  const [level, setLevel] = useState(null)
 
   const [food, setFood] = useState(generateFood(level));
-  const handlebutton = (level) => {
-    setDirection(INITIAL_DIRECTION);
-    setSnake(INITIAL_SNAKE);
-    setScore(0);
-    switch (level) {
-      case '1':
-        setLevel('1');
-        break;
-      case '2':
-        setLevel('2');
-        break;
-      case '3':
-        setLevel('3');
-        break;
-      default:
-        break;
-    }
-  }
+
+  
+  
 
   const checkCollision = (snake) => {
     const head = snake[0];
@@ -92,12 +79,11 @@ const Game = () => {
   };
 
   const resetGame = () => {
-    setLevel(null);
     setSnake(INITIAL_SNAKE);
     setDirection(INITIAL_DIRECTION);
     setGameOver(false);
     setScore(0);
-    setFood(generateFood(null));
+    setFood(generateFood(level));
   };
 
   useEffect(() => {
@@ -208,11 +194,7 @@ const Game = () => {
           </div>
         ))}
       </div>
-      <div className="levelbutton">
-        <button className="button" onClick={() => handlebutton('1')}>level 1</button>
-        <button className="button" onClick={() => handlebutton('2')}>level 2</button>
-        <button className="button" onClick={() => handlebutton('3')}>level 3</button>
-      </div>
+    
       {gameOver && (
         <div className='dialog'>
           <div className='reset'>
