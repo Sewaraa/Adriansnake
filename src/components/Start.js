@@ -30,7 +30,7 @@ const Start =()=>{
         <div className="levelbutton">
         <button className="btn" onClick={() => handlebutton('1')}>Letters</button>
         <button className="btn" onClick={() => handlebutton('2')}>Numbers</button>
-        <button className="btn" onClick={() => handlebutton('3')}>Familt</button>
+        <button className="btn" onClick={() => handlebutton('3')}>Family</button>
       </div>
         </div>
     </div>)

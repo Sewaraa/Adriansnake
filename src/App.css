@@ -23,8 +23,11 @@ body{
   }
   
   p {
-    font-size: 1.5rem;
-    color: #633399;
+    font-size: 1.6rem;
+    color: var(--color-gray);
+  }
+  h2{
+    color: var(--color-blue-dark);
   }
   
   h1 {
@@ -42,7 +45,7 @@ body{
     position: relative;
     width: 90%;
     max-width: 500px;
-    height: 500px;
+    min-height: 500px;
     border: 2px solid rgb(102, 51, 153);
     box-shadow: rgba(151, 65, 252, 0.2) 0 15px 30px -5px;
    
@@ -60,16 +63,110 @@ body{
     height: 20px;
     
   }
+  .snake_headuP{
+    width: 20px;
+    height: 20px;
+    background-color:var(--color-blue-dark);
+    position: relative;
+    border-radius: 50% / 70% 70% 100% 100%;
+   
+  }
   
+  .snake_headuP::before,
+  .snake_headuP::after {
+    content: "";
+    position: absolute;
+    width: 5px;
+    height: 5px;
+    background-color: black;
+    border-radius: 50%;
+  }
+  
+  .snake_headuP::before {
+    
+    top: 8px;
+    left: 4px;
+  }
+  
+  .snake_headuP::after {
+   top: 8px;
+    right: 4px;
+    
+  }
+
+  .snake_headlEFT{
+    width: 20px;
+    height: 20px;
+    background-color:var(--color-blue-dark);
+    position: relative;
+    border-radius: 100% 70% 70% 100% ;
+    
+  }
+
+  .snake_headlEFT::before,
+  .snake_headlEFT::after {
+    content: "";
+    position: absolute;
+    width: 5px;
+    height: 5px;
+    background-color: black;
+    border-radius: 50%;
+  }
+  
+  .snake_headlEFT::before {
+    top:12px ;
+    right: 6px;
+  }
+  
+  .snake_headLEFT::after {
+   
+    top:12px ;
+    right: 6px;
+    
+  }
+  
+ 
+ 
+   .snaketail {
+    width: 80px;
+    height: 120px;
+    background-color: green;
+    position: relative;
+    border-radius: 50% / 70% 70% 30% 30%;
+  }
+  
+  .snaketail::before,
+  .snaketail::after {
+    content: "";
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    background-color: black;
+    border-radius: 50%;
+  }
+  
+  .snaketail::before {
+    top: 30px;
+    left: 20px;
+  }
+  
+  .snaketail::after {
+    top: 70px;
+    left: 20px;
+  }
+  
+ 
   .snake {
-    border-radius: 30%;
-    background-color: var(--color-yellow-dark)
+   
+    background-color:var(--color-blue-dark);
+    filter: blur(5px);
+
   }
   
   .food {
     
     font-size:25px;
-   color: var(--color-blue);
+    color: var(--color-yellow-dark);
     font-weight: bold;
    
     
@@ -120,29 +217,13 @@ body{
   }
   
   
-  .dialog {
-    justify-content: center;
-    align-items: center;
-    position: fixed;
-    color: #f8f8f8;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    background: rgb(221, 203, 241);
-    z-index: 999;
-  }
-  
-  .reset {
-    margin-top :20%;
-  }
   
   .control {
-   
+   gap: 12px;
   }
 
 
-  .welcome{
+  .modal{
     position: fixed;
     top: 0;
     left: 0;
@@ -154,5 +235,15 @@ body{
     align-items: center;
     
     
+  }
+  .modal .modal_content{
+    background-color: #012335;
+    width: 100%;
+    
+  }
+  .header{
+    display:flex;
+    justify-content: space-between;
+   margin: 30px;
   }
  

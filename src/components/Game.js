@@ -13,7 +13,7 @@ const Names = ['Brian', 'Thomas', 'Choo Choo Astoria Alenda', 'Arthur', 'Avila']
 
 
 const Game = () => {
-  const{level }=useContext(GameContext);
+  const{level,setScreen }=useContext(GameContext);
   const generateFood = (level) => {
 
     let randomIndex;
@@ -63,9 +63,7 @@ const Game = () => {
   const [score, setScore] = useState(0);
 
   const [food, setFood] = useState(generateFood(level));
-
-  
-  
+ 
 
   const checkCollision = (snake) => {
     const head = snake[0];
@@ -77,6 +75,9 @@ const Game = () => {
       head.col >= COLS
     );
   };
+  const handleQuit =()=>{
+    setScreen("start")
+  }
 
   const resetGame = () => {
     setSnake(INITIAL_SNAKE);
@@ -170,17 +171,34 @@ const Game = () => {
   return (
     <div >
       <h1> Adrian & Snake</h1>
+      <div className="header">
       <p> Score : 🚀 {score}</p>
+      <button onClick={() => { setIsPause(!isPause) }}> {isPause ? 'Resume' : 'Pause'}</button>
+      </div>
+      
       <div className="game-board">
         {Array.from({ length: ROWS }).map((_, rowIndex) => (
           <div key={rowIndex} className="row">
             {Array.from({ length: COLS }).map((_, colIndex) => (
               <div
                 key={colIndex}
-                className={`cell ${snake.some(
-                  (segment) => segment.row === rowIndex && segment.col === colIndex
-                ) ? 'snake' : ''} ${food.row === rowIndex && food.col === colIndex ? 'food' : ''}`}
-              >  {food.row === rowIndex && food.col === colIndex && food.foodSnake}
+                className={`cell  ${snake.some(
+                  (segment) => segment.row === rowIndex && segment.col === colIndex && segment ===snake[0] &&(direction ==='LEFT' || direction ==='RIGHT')
+                ) ? 'snake_headlEFT' : ''}
+                ${snake.some(
+                  (segment) => segment.row === rowIndex && segment.col === colIndex && segment ===snake[0] &&(direction ==='UP' || direction ==='DOWN')
+                ) ? 'snake_headuP' : ''}
+               
+                ${snake.some(
+                  (segment) => segment.row === rowIndex && segment.col === colIndex && segment !==snake[0]
+                ) ? 'snake' : ''}
+                
+                ${food.row === rowIndex && food.col === colIndex ? 'food' : ''}
+               
+               `}
+                
+              >
+               {food.row === rowIndex && food.col === colIndex && food.foodSnake}
                 {snake.some(
                   (segment) => segment.row === rowIndex && segment.col === colIndex && segment.foodSnake
                 )
@@ -196,15 +214,20 @@ const Game = () => {
       </div>
     
       {gameOver && (
-        <div className='dialog'>
-          <div className='reset'>
-            <p>Oops Adrian Game over! <b>Your Score 🐍 {score}</b></p>
+        <div className='modal'>
+          <div className='modal_content'>
+            <h2>Oops Adrian Game over! </h2>
+            <h2>Your Score 🐍 {score}</h2>
+            <div className="resequi">
             <button onClick={() => resetGame()}>Restart</button>
+            <button onClick={()=>handleQuit()} >Quit</button>
+            </div>
+            
           </div>
         </div>
       )}
       <div className='control'>
-        <button onClick={() => { setIsPause(!isPause) }}> {isPause ? 'Resume' : 'Pause'}</button>
+       
         <div className='button'>
           <button className="up" onClick={() => setDirection('UP')} >↑</button><br />
           <button className="left" onClick={() => setDirection('LEFT')} >←</button>
