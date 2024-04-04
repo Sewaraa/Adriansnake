@@ -28,9 +28,9 @@ const Start =()=>{
         <div className="game-board">
        {show === true ? <Welcome/>:""}
         <div className="levelbutton">
-        <button className="btn" onClick={() => handlebutton('1')}>Letters</button>
-        <button className="btn" onClick={() => handlebutton('2')}>Numbers</button>
-        <button className="btn" onClick={() => handlebutton('3')}>Family</button>
+        <button className="btn " onClick={() => handlebutton('1')}>Letters</button>
+        <button className="btn " onClick={() => handlebutton('2')}>Numbers</button>
+        <button className="btn " onClick={() => handlebutton('3')}>Family</button>
       </div>
         </div>
     </div>)

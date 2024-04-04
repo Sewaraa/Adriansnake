@@ -8,7 +8,7 @@ const Welcome = () => {
             <div  className="modal_content">
                 <h1 > Hello Adrian!</h1>
                 <h2>Are you Ready?</h2>
-                <button onClick={hideModal}>Ok</button></div>
+                <button  className= "btn"onClick={hideModal}>Ok</button></div>
 
 
 
